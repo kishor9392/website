@@ -1,3 +1,4 @@
+// Write your JS code here
 import {Component} from 'react'
 
 import './index.css'
@@ -7,6 +8,7 @@ class LoginForm extends Component {
     username: '',
     password: '',
     error: false,
+    msg: '',
   }
 
   onChangeUsername = event => {
@@ -23,6 +25,10 @@ class LoginForm extends Component {
     history.replace('/')
   }
 
+  onCheck = data => {
+    this.setState({error: true, msg: data})
+  }
+
   onSubmit = async event => {
     event.preventDefault()
     const {username, password} = this.state
@@ -35,11 +41,12 @@ class LoginForm extends Component {
     }
 
     const response = await fetch('https://apis.ccbp.in/login', options)
+    const data = await response.json()
 
     if (response.ok === true) {
       this.onLogin()
     } else {
-      this.setState({error: true, username: '', password: ''})
+      this.setState(this.onCheck(data.error_msg))
     }
   }
 
@@ -84,7 +91,7 @@ class LoginForm extends Component {
   }
 
   render() {
-    const {error} = this.state
+    const {error, msg} = this.state
     return (
       <div className="log-con">
         <img
@@ -111,7 +118,7 @@ class LoginForm extends Component {
           <button type="submit" className="button">
             Login
           </button>
-          {error && <p className="error">Username is not found</p>}
+          {error && <p className="error">{msg}</p>}
         </form>
       </div>
     )
